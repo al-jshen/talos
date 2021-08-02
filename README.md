@@ -1,3 +1,3 @@
 # talos
 
-Experimental DSL for statistical modelling in Rust. 
+Experimental crate for statistical modelling in Rust. 
