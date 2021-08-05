@@ -10,11 +10,26 @@ pub fn model(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let mut param_arg_name = None;
 
+    let generics = if input.sig.generics.lt_token.is_some() && input.sig.generics.gt_token.is_some()
+    {
+        input.sig.generics.params.to_token_stream().to_string()
+    } else {
+        "".to_string()
+    };
+
+    let genericargs = generics
+        .split(", ")
+        .into_iter()
+        .filter_map(|g| if g.starts_with("'") { Some(g) } else { None })
+        .collect::<Vec<_>>();
+
+    assert!(genericargs.len() == 1, "Must have one lifetime parameter!");
+
     for fnarg in input.sig.inputs.iter() {
         match fnarg {
             syn::FnArg::Typed(pattype) => {
                 let ty = pattype.ty.to_token_stream().to_string();
-                if ty == "& [Var < 'a >]" {
+                if ty == format!("& [Var < {} >]", genericargs[0]) {
                     param_arg_name = Some(&pattype.pat);
                     break;
                 }
@@ -23,11 +38,14 @@ pub fn model(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     }
     if param_arg_name.is_none() {
-        panic!("At least one argument must take a slice of Var<'a>");
+        panic!(
+            "At least one argument must take a slice of Var<{}>",
+            genericargs[0]
+        );
     }
 
-    input.sig.output =
-        syn::parse_str("-> Var < 'a >").expect("Output type could not be rewritten to Var<'a>!");
+    input.sig.output = syn::parse_str(&format!("-> Var < {} >", genericargs[0]))
+        .expect("Output type could not be rewritten to Var<'a>!");
 
     let add_target: Stmt = parse_quote! {
         let mut target = #param_arg_name[0].tape.add_var(0.);
