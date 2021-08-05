@@ -1,3 +1,3 @@
 # talos
 
-Experimental crate for statistical modelling in Rust. 
+Highly experimental crate for statistical modelling in Rust. 
