@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use proc_macro::{Span, TokenStream};
 use quote::ToTokens;
 use syn::{parse_macro_input, parse_quote, Stmt};
 
@@ -25,6 +25,9 @@ pub fn model(_attr: TokenStream, item: TokenStream) -> TokenStream {
     if param_arg_name.is_none() {
         panic!("At least one argument must take a slice of Var<'a>");
     }
+
+    input.sig.output =
+        syn::parse_str("-> Var < 'a >").expect("Output type could not be rewritten to Var<'a>!");
 
     let add_target: Stmt = parse_quote! {
         let mut target = #param_arg_name[0].tape.add_var(0.);

@@ -32,7 +32,7 @@ fn main() {
 }
 
 #[model]
-fn lnlik<'a>(params: &[Var<'a>], data: &HashMap<&str, Vec<f64>>) -> Var<'a> {
+fn lnlik<'a>(params: &[Var<'a>], data: &HashMap<&str, Vec<f64>>) {
     let (m, b, s) = (params[0], params[1], params[2]);
 
     normal!(m; 0., 2_f64);
