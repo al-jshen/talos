@@ -39,27 +39,6 @@ pub fn model(_attr: TokenStream, item: TokenStream) -> TokenStream {
     input.block.stmts.insert(0, add_target);
     input.block.stmts.push(return_target);
 
-    // let mut to_add: Vec<(usize, String)> = vec![];
-
-    // for (i, stmt) in input.block.stmts.iter().enumerate() {
-    //     let ss = stmt.to_token_stream().to_string();
-    //     for dist in DISTRIBUTIONS {
-    //         if ss.contains(dist) {
-    //             if ss.starts_with(dist) {
-    //                 // simple case
-    //                 to_add.push((i, format!("target = target + {}", ss)));
-    //             } else {
-    //                 // somewhere in the middle of the statement
-    //                 println!("{:?}", ss);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // for (i, stmt) in to_add.iter().rev() {
-    //     println!("i, {:?}", stmt.to_token_stream().to_string());
-    //     input.block.stmts[*i] = syn::parse_str(&stmt).unwrap();
-    // }
     input.block.stmts = (input.block.stmts)
         .iter()
         .map(|s| {
