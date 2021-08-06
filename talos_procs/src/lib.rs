@@ -1,8 +1,15 @@
-use proc_macro::{Span, TokenStream};
+use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::{parse_macro_input, parse_quote, Stmt};
 
-const DISTRIBUTIONS: [&str; 5] = ["normal!", "exponential!", "gamma!", "uniform!", "laplace!"];
+const DISTRIBUTIONS: [&str; 6] = [
+    "normal!",
+    "exponential!",
+    "gamma!",
+    "uniform!",
+    "laplace!",
+    "beta!",
+];
 
 #[proc_macro_attribute]
 pub fn model(_attr: TokenStream, item: TokenStream) -> TokenStream {

@@ -45,3 +45,17 @@ macro_rules! laplace {
         (1_f64 / (2_f64 * $b)).ln() - ($var - $mu).abs() / $b
     }};
 }
+
+#[macro_export]
+macro_rules! beta {
+    ( $var: expr; $alpha: expr, $beta: expr ) => {{
+        assert!(
+            ($var >= 0.) && ($var <= 1.),
+            "Variable must be between 0 and 1."
+        );
+        assert!($alpha > 0., "Alpha must be positive.");
+        assert!($beta > 0., "Beta must be positive.");
+        ($alpha - 1.) * $var.ln() + ($beta - 1.) * (1. - $var).ln()
+            - talos::functions::beta($alpha, $beta).ln()
+    }};
+}

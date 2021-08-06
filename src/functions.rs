@@ -135,6 +135,19 @@ pub fn gamma<T: Gamma>(z: T) -> T {
     Gamma::gamma(z)
 }
 
+pub fn beta<
+    T: Gamma
+        + std::ops::Mul<Output = T>
+        + std::ops::Add<Output = T>
+        + std::ops::Div<Output = T>
+        + Copy,
+>(
+    a: T,
+    b: T,
+) -> T {
+    a.gamma() * b.gamma() / (a + b).gamma()
+}
+
 /// Calculates the [digamma function](https://en.wikipedia.org/wiki/Digamma_function), which is the
 /// logarithmic derivative of the gamma function. It obeys the equation `digamma(x+1) = digamma(x)
 /// + 1/x`. The approximation works better for large values. If the value is small, this function
