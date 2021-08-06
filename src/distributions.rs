@@ -1,3 +1,5 @@
+use crate::functions;
+
 #[macro_export]
 macro_rules! normal {
     ( $var: expr ; $mean: expr, $sigma: expr  ) => {{
@@ -34,7 +36,7 @@ macro_rules! gamma {
         assert!($beta > 0., "Beta must be positive.");
         $alpha * $beta.ln() + ($alpha - 1_f64) * $var.ln()
             - ($beta * $var)
-            - talos::functions::gamma($alpha).ln()
+            - functions::gamma($alpha).ln()
     }};
 }
 
@@ -51,11 +53,44 @@ macro_rules! beta {
     ( $var: expr; $alpha: expr, $beta: expr ) => {{
         assert!(
             ($var >= 0.) && ($var <= 1.),
-            "Variable must be between 0 and 1."
+            "Variable must be between 0. and 1."
         );
         assert!($alpha > 0., "Alpha must be positive.");
         assert!($beta > 0., "Beta must be positive.");
         ($alpha - 1.) * $var.ln() + ($beta - 1.) * (1. - $var).ln()
-            - talos::functions::beta($alpha, $beta).ln()
+            - functions::beta($alpha, $beta).ln()
+    }};
+}
+
+#[macro_export]
+macro_rules! bernoulli {
+    ( $var: expr; $theta: expr ) => {{
+        assert!(
+            ($theta >= 0.) && ($theta <= 1.),
+            "Theta must be between 0 and 1."
+        );
+        match $var {
+            0 => 1. - $theta,
+            1 => $theta,
+            _ => panic!("Variable must be an integer that is either either 0 or 1."),
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! binomial {
+    ( $n: expr; $N: expr, $theta: expr ) => {{
+        assert!(
+            ($theta >= 0.) && ($theta <= 1.),
+            "Theta must be between 0 and 1."
+        );
+        assert!($N > 0, "N must be a positive integer.");
+        assert!($n >= 0, "n must be a non-negative integer.");
+        let success = $n as f64;
+        let trials = $N as f64;
+        // functions::gamma(trials + 1.).ln()
+        //     - functions::gamma(success + 1.).ln()
+        //     - functions::gamma(trials - success + 1.).ln() +
+        success * $theta.ln() + (trials - success) * (1. - $theta).ln()
     }};
 }

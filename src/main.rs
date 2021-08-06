@@ -2,8 +2,10 @@ use std::collections::HashMap;
 
 use compute::prelude::{linspace, Distribution1D, Normal, Vector};
 use reverse::*;
-use talos::samplers::{Gibbs, Sampler};
-use talos::*;
+use talos::{
+    samplers::{Gibbs, Sampler},
+    *,
+};
 use talos_procs::model;
 
 pub enum Data {
@@ -27,6 +29,7 @@ fn main() {
     y = y + Normal::new(0., 1.).sample_n(n);
     data.insert("xobs", Data::FloatArray(x));
     data.insert("yobs", Data::FloatArray(y));
+    data.insert("test", Data::Int(10));
 
     for chain in s.sample_par(lnlik, &params, &data, 10000, 4) {
         for samp in chain {
@@ -48,9 +51,14 @@ fn lnlik(params: &[f64], data: &HashMap<&str, Data>) {
         Data::FloatArray(arr) => arr,
         _ => panic!(),
     };
+    let test = match data["test"] {
+        Data::Int(i) => i,
+        _ => panic!(),
+    };
 
     normal!(m; 4_f64, 1_f64);
     laplace!(b; 2_f64, 1_f64);
+    binomial!(test; 20, 0.5);
 
     for i in 0..2 {
         normal!(xobs[i]; x[i], 1.);

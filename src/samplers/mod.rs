@@ -1,6 +1,7 @@
 use rayon::prelude::*;
 
-pub mod gibbs;
+mod gibbs;
+pub use gibbs::Gibbs;
 
 pub trait Sampler {
     type V: Send + Sync + Copy;
