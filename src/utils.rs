@@ -16,3 +16,12 @@ macro_rules! unpack {
         }
     }};
 }
+
+#[macro_export]
+macro_rules! unpack_tuple {
+    ( $data: expr, $n: expr ) => {
+        seq_macro::seq!(i in 0..$n {
+            ( #( $data[i], )* )
+        }
+    )};
+}

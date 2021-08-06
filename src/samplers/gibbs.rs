@@ -79,6 +79,8 @@ impl Sampler for Gibbs {
             samples.push(running_params.clone());
         }
 
-        samples
+        (0..self.dims())
+            .map(|i| samples.iter().map(|x| x[i]).collect::<Vec<_>>())
+            .collect::<Vec<_>>()
     }
 }
