@@ -22,9 +22,10 @@ impl Sampler for Gibbs {
     type V = f64;
 
     /// Make a single proposal for the all parameters.
-    fn step<'a, F, S>(&self, f: F, current_params: &[Self::V], data: &S) -> Vec<Self::V>
+    fn step<'a, F, S>(&self, f: F, current_params: &[Self::V], data: S) -> Vec<Self::V>
     where
-        F: Fn(&[Self::V], &S) -> Self::V,
+        F: Fn(&[Self::V], S) -> Self::V + Copy + Send + Sync,
+        S: Copy + Send + Sync,
     {
         assert!(
             current_params.len() == self.dims(),
@@ -60,11 +61,12 @@ impl Sampler for Gibbs {
         &self,
         f: F,
         inits: &[Self::V],
-        data: &S,
+        data: S,
         n_samples: usize,
     ) -> Vec<Vec<Self::V>>
     where
-        F: Fn(&[Self::V], &S) -> Self::V,
+        F: Fn(&[Self::V], S) -> Self::V + Copy + Send + Sync,
+        S: Copy + Send + Sync,
     {
         assert!(inits.len() == self.dims(), "Wrong number of parameters.");
 

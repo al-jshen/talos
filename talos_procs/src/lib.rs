@@ -3,6 +3,7 @@ use quote::ToTokens;
 use syn::{parse_macro_input, parse_quote, Stmt};
 
 const DISTRIBUTIONS: [&str; 13] = [
+    "lognormal",
     "normal!",
     "exponential!",
     "gamma!",
@@ -13,7 +14,6 @@ const DISTRIBUTIONS: [&str; 13] = [
     "binomial!",
     "poisson!",
     "cauchy!",
-    "lognormal",
     "rayleigh",
     "pareto!",
 ];
@@ -142,6 +142,7 @@ pub fn model(args: TokenStream, item: TokenStream) -> TokenStream {
                 if ss.contains(dist) {
                     // println!("{:?}", ss);
                     ss = ss.replace(dist, &format!("target = target + {}", dist));
+                    break;
                 }
             }
             syn::parse_str(&ss).expect(&format!("failed to convert statement: {}", ss))
