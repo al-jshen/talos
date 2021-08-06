@@ -8,8 +8,8 @@ edition = "2018"
 [dependencies]
 alea = "0.2"
 rayon = "1.5"
-compute = { path = "/home/js/programs/compute" }
-reverse = { path = "/home/js/programs/reverse" }
-talos_procs = { path = "./talos_procs" }
 seq-macro = "0.2"
+compute = { git = "https://github.com/al-jshen/compute" }
+reverse = { git = "https://github.com/al-jshen/reverse" }
+talos_procs = { path = "./talos_procs" }
 
