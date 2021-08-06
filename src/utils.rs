@@ -9,10 +9,10 @@ pub enum Data {
 
 #[macro_export]
 macro_rules! unpack {
-    ( $var: expr; $t: path ) => {{
+    ( $var: expr, $t: ident ) => {{
         match &$var {
-            $t(d) => d,
-            _ => panic!(),
+            Data::$t(d) => d,
+            _ => panic!("Type to unpack must be a variant of the Data enum (Float, Int, FloatArray, IntArray)."),
         }
     }};
 }
