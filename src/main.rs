@@ -1,44 +1,36 @@
 use std::collections::HashMap;
 
+use compute::prelude::{linspace, Distribution1D, Normal, Vector};
 use reverse::*;
+use talos::samplers::{Gibbs, Sampler};
 use talos::*;
 use talos_procs::model;
 
 fn main() {
-    let t = Tape::new();
+    let s = Gibbs::new(&[0.1, 0.1]);
 
-    let mut params = [1., 0.5, 1.]
-        .iter()
-        .map(|&x| t.add_var(x))
-        .collect::<Vec<_>>();
+    let params = [0., 0.];
 
     let mut data = HashMap::new();
-    data.insert("x", vec![0., 1., 2., 3., 4.]);
-    data.insert("y", vec![0.1, 2.05, 3.9, 6.2, 7.8]);
+    let x = linspace(0., 10., 1000);
+    let mut y = (&x) * 5. + 2.;
+    y = y + Normal::new(0., 1.).sample_n(x.len());
+    data.insert("x", x);
+    data.insert("y", y);
 
-    for _ in 0..1200 {
-        println!(
-            "{:?}",
-            [params[0].val(), params[1].val(), params[2].val().exp()]
-        );
-        let res = -lnlik(&params, &data);
-        let grad = res.grad().wrt(&params[..3]);
-        println!("{:?}", res.val());
-        for i in 0..3 {
-            params[i] = params[i] - 1e-3 * grad[i]
-        }
+    for samp in s.sample(lnlik, &params, &data, 10000) {
+        println!("{},{}", samp[0], samp[1]);
     }
 }
 
-#[model]
-fn lnlik<'a>(params: &[Var<'a>], data: &HashMap<&str, Vec<f64>>) {
-    let (m, b, s) = (params[0], params[1], params[2]);
+#[model("f64")]
+fn lnlik(params: &[f64], data: &HashMap<&str, Vector>) {
+    let (m, b) = (params[0], params[1]);
 
-    normal!(m; 0_f64, 1_f64);
-    beta!(b; 2_f64, 2_f64);
-    normal!(s; 0_f64, 2_f64).powi(2);
+    normal!(m; 4_f64, 1_f64);
+    laplace!(b; 2_f64, 1_f64);
 
     for (&xi, &yi) in data["x"].iter().zip(&data["y"]) {
-        normal!(yi ; xi * m + b, s.exp());
+        normal!(yi ; xi * m + b, 1.);
     }
 }
