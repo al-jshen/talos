@@ -82,7 +82,8 @@ macro_rules! binomial {
     ( $n: expr; $N: expr, $theta: expr ) => {{
         assert!(
             ($theta >= 0.) && ($theta <= 1.),
-            "Theta must be between 0 and 1."
+            "Theta ({}) must be between 0 and 1.",
+            $theta
         );
         assert!($N > 0, "N must be a positive integer.");
         assert!($n >= 0, "n must be a non-negative integer.");

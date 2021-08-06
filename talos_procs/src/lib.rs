@@ -2,13 +2,20 @@ use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::{parse_macro_input, parse_quote, Stmt};
 
-const DISTRIBUTIONS: [&str; 6] = [
+const DISTRIBUTIONS: [&str; 13] = [
     "normal!",
     "exponential!",
     "gamma!",
     "uniform!",
     "laplace!",
     "beta!",
+    "bernoulli!",
+    "binomial!",
+    "poisson!",
+    "cauchy!",
+    "lognormal",
+    "rayleigh",
+    "pareto!",
 ];
 
 #[proc_macro_attribute]
