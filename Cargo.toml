@@ -9,7 +9,7 @@ edition = "2018"
 alea = "0.2"
 rayon = "1.5"
 seq-macro = "0.2"
-compute = { git = "https://github.com/al-jshen/compute" }
-reverse = { git = "https://github.com/al-jshen/reverse" }
-talos_procs = { path = "./talos_procs" }
+compute = { git = "https://github.com/al-jshen/compute", version = "0.2" }
+reverse = { git = "https://github.com/al-jshen/reverse", version = "0.2" }
+talos_procs = { path = "./talos_procs", version = "0.1" }
 
