@@ -1,15 +1,17 @@
 use std::collections::HashMap;
 
 use compute::prelude::{linspace, Distribution1D, Normal, Vector};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use reverse::*;
 use talos::{
-    samplers::{Gibbs, Sampler},
+    samplers::{Gibbs, Sampler, HMC},
     utils::Data,
     *,
 };
 use talos_procs::model;
 
 fn main() {
-    // simulate and pack some data of mixed types
+    // // simulate and pack some data of mixed types
     let mut data = HashMap::new();
 
     let slopes = [2., 4.];
@@ -28,25 +30,35 @@ fn main() {
     data.insert("x2", Data::FloatArray(x2));
     data.insert("y2", Data::FloatArray(y2));
 
-    // 2 slopes + 2 intercepts + hierarchical slope + hierarchical intercept
+    // // 2 slopes + 2 intercepts + hierarchical slope + hierarchical intercept
 
-    let s = Gibbs::new(&[0.05; 6]);
-
-    let params = [0.5; 6];
-
-    let samples = s
-        .sample(lnlik, &params, &data, 10000)
-        .into_iter()
-        .map(|x| Vector::from(x))
+    let res = (0..4)
+        .into_par_iter()
+        .map(|_| {
+            let h = HMC {};
+            let t = Tape::new();
+            let inits = t.add_vars(&[1.; 6]);
+            h.sample(lnlik, &inits, &data, 1000)
+        })
         .collect::<Vec<_>>();
 
-    for (i, s) in samples.into_iter().enumerate() {
-        println!("d{} = {}", i, s);
-    }
+    // let s = Gibbs::new(&[0.05; 6]);
+
+    // let params = [0.5; 6];
+
+    // let samples = s
+    //     .sample(lnlik, &params, &data, 10000)
+    //     .into_iter()
+    //     .map(|x| Vector::from(x))
+    //     .collect::<Vec<_>>();
+
+    // for (i, s) in samples.into_iter().enumerate() {
+    //     println!("d{} = {}", i, s);
+    // }
 }
 
-#[model("f64")]
-fn lnlik(params: &[f64], data: &HashMap<&str, Data>) {
+#[model("Var<'a>")]
+fn lnlik<'a>(params: &[Var<'a>], data: &HashMap<&str, Data>) {
     let (ih, i1, i2, sh, s1, s2) = unpack_tuple!(params, 6);
     let x1 = unpack!(data["x1"], FloatArray);
     let y1 = unpack!(data["y1"], FloatArray);

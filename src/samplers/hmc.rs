@@ -1,8 +1,3 @@
-use std::{
-    sync::{Arc, Mutex},
-    thread,
-};
-
 use super::Sampler;
 use rayon::prelude::*;
 use reverse::*;
@@ -26,6 +21,7 @@ impl<'a> Sampler<Var<'a>> for HMC {
     {
         todo!()
     }
+
     fn sample_par<F, S>(
         &self,
         f: F,
