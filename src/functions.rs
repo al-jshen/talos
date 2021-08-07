@@ -12,9 +12,7 @@ pub fn logistic(x: Var) -> Var {
 
 /// Calculates the [logit function](https://en.wikipedia.org/wiki/Logit)
 pub fn logit(p: Var) -> Var {
-    if !(0. ..=1.).contains(&p) {
-        panic!("p must be in [0, 1]");
-    }
+    assert!((p >= 0.) && (p <= 1.), "p must be in [0, 1].");
     (p / (1. - p)).ln()
 }
 
