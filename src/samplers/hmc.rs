@@ -21,20 +21,4 @@ impl<'a> Sampler<Var<'a>> for HMC {
     {
         todo!()
     }
-
-    fn sample_par<F, S>(
-        &self,
-        f: F,
-        inits: &[Var<'a>],
-        data: S,
-        n_samples: usize,
-        n_chains: usize,
-    ) -> Vec<Vec<Vec<f64>>>
-    where
-        F: Fn(&[Var<'a>], S) -> Var<'a> + Copy + Send + Sync,
-        Self: Clone,
-        S: Send + Sync + Copy,
-    {
-        todo!()
-    }
 }

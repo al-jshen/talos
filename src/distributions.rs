@@ -1,5 +1,3 @@
-use crate::functions;
-
 #[macro_export]
 macro_rules! normal {
     ( $var: expr ; $mean: expr, $sigma: expr  ) => {{

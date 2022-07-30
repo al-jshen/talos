@@ -18,6 +18,24 @@ impl Gibbs {
     pub fn dims(&self) -> usize {
         self.stepsizes.len()
     }
+    fn sample_par<'a, F, S>(
+        &self,
+        f: F,
+        inits: &[f64],
+        data: S,
+        n_samples: usize,
+        n_chains: usize,
+    ) -> Vec<Vec<Vec<f64>>>
+    where
+        F: Fn(&[f64], S) -> f64 + Copy + Send + Sync,
+        Self: Send + Sync + Clone,
+        S: Send + Sync + Copy,
+    {
+        (0..n_chains)
+            .into_par_iter()
+            .map(|_| self.sample(f, inits, data, n_samples))
+            .collect()
+    }
 }
 
 impl Sampler<f64> for Gibbs {
@@ -76,24 +94,5 @@ impl Sampler<f64> for Gibbs {
         (0..self.dims())
             .map(|i| samples.iter().map(|x| x[i]).collect::<Vec<_>>())
             .collect::<Vec<_>>()
-    }
-
-    fn sample_par<'a, F, S>(
-        &self,
-        f: F,
-        inits: &[f64],
-        data: S,
-        n_samples: usize,
-        n_chains: usize,
-    ) -> Vec<Vec<Vec<f64>>>
-    where
-        F: Fn(&[f64], S) -> f64 + Copy + Send + Sync,
-        Self: Send + Sync + Clone,
-        S: Send + Sync + Copy,
-    {
-        (0..n_chains)
-            .into_par_iter()
-            .map(|_| self.sample(f, inits, data, n_samples))
-            .collect()
     }
 }
